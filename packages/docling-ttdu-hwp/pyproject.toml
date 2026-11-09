@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "docling-ttdu-hwp"
+dynamic = ["version"]
+description = "HWP/HWPX (Korean word processor) input for Docling: builds a DoclingDocument via the Tools That Don't Upload API or its offline local runner"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
+authors = [{ name = "Tools That Don't Upload" }]
+keywords = ["docling", "hwp", "hwpx", "hangul", "korean", "rag", "document-conversion"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Natural Language :: Korean",
+  "Programming Language :: Python :: 3",
+]
+dependencies = ["docling-core>=2.40", "ttdu-hwp>=0.1.0,<0.2"]
+
+[project.optional-dependencies]
+docling = ["docling>=2.40"]
+
+[project.urls]
+Documentation = "https://toolsthatdontupload.com/docs/hwp/"
+
+[tool.hatch.version]
+path = "src/docling_ttdu_hwp/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/docling_ttdu_hwp"]
