@@ -1,18 +1,18 @@
 # Publish all three packages to PyPI when a GitHub release is published (tag vX.Y.Z).
 # Uses PyPI Trusted Publishing (OIDC): no API token is stored in this repository.
-# One-time setup on PyPI, for each project (ttdu-hwp, markitdown-ttdu-hwp, docling-ttdu-hwp):
-#   Publishing -> Add a (pending) publisher -> GitHub
-#   owner: etacbae6768-a11y, repository: ttdu-hwp-plugins, workflow: publish.yml, environment: pypi
+# PyPI needs a different publisher configuration for each new project, so each package is
+# uploaded by its own job with its own GitHub environment. Publishers registered on PyPI
+# (owner etacbae6768-a11y, repository ttdu-hwp-plugins, workflow publish.yml):
+#   ttdu-hwp             -> environment pypi
+#   markitdown-ttdu-hwp  -> environment pypi-markitdown
+#   docling-ttdu-hwp     -> environment pypi-docling
+# ttdu-hwp is uploaded first so the plugins can resolve their dependency right away.
+# workflow_dispatch re-runs the upload (for example after a failed job); PyPI refuses files that already exist.
 name: publish
 on:
   release:
     types: [published]
   workflow_dispatch:
-    inputs:
-      target:
-        description: "testpypi or pypi"
-        required: true
-        default: testpypi
 
 jobs:
   build:
@@ -39,16 +39,18 @@ jobs:
           pip install build twine
           for p in ttdu-hwp markitdown-ttdu-hwp docling-ttdu-hwp; do python -m build "packages/$p" -o dist; done
           twine check dist/*
+          ls -l dist
       - uses: actions/upload-artifact@v4
         with:
           name: dist
           path: dist/
 
-  publish:
+  publish-ttdu-hwp:
     needs: build
     runs-on: ubuntu-latest
     environment:
-      name: ${{ github.event_name == 'release' && 'pypi' || inputs.target }}
+      name: pypi
+      url: https://pypi.org/project/ttdu-hwp/
     permissions:
       id-token: write
     steps:
@@ -56,14 +58,43 @@ jobs:
         with:
           name: dist
           path: dist/
-      # ttdu-hwp is uploaded first so the plugins can resolve their dependency right away.
-      - name: Order uploads
-        run: mkdir -p first rest && mv dist/ttdu_hwp-* first/ && mv dist/* rest/
+      - run: mkdir up && mv dist/ttdu_hwp-* up/ && ls -l up
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages-dir: first/
-          repository-url: ${{ (github.event_name != 'release' && inputs.target == 'testpypi') && 'https://test.pypi.org/legacy/' || 'https://upload.pypi.org/legacy/' }}
+          packages-dir: up/
+
+  publish-markitdown-ttdu-hwp:
+    needs: publish-ttdu-hwp
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi-markitdown
+      url: https://pypi.org/project/markitdown-ttdu-hwp/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - run: mkdir up && mv dist/markitdown_ttdu_hwp-* up/ && ls -l up
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          packages-dir: rest/
-          repository-url: ${{ (github.event_name != 'release' && inputs.target == 'testpypi') && 'https://test.pypi.org/legacy/' || 'https://upload.pypi.org/legacy/' }}
+          packages-dir: up/
+
+  publish-docling-ttdu-hwp:
+    needs: publish-ttdu-hwp
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi-docling
+      url: https://pypi.org/project/docling-ttdu-hwp/
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - run: mkdir up && mv dist/docling_ttdu_hwp-* up/ && ls -l up
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: up/
