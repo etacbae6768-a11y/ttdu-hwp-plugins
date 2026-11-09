@@ -2,8 +2,8 @@
 # Uses PyPI Trusted Publishing (OIDC): no API token is stored in this repository.
 # One-time setup on PyPI, for each project (ttdu-hwp, markitdown-ttdu-hwp, docling-ttdu-hwp):
 #   Publishing -> Add a (pending) publisher -> GitHub
-#   owner: etacbae6768-a11y, repository: ttdu-hwp-plugins, workflow: release.yml, environment: pypi
-name: release
+#   owner: etacbae6768-a11y, repository: ttdu-hwp-plugins, workflow: publish.yml, environment: pypi
+name: publish
 on:
   release:
     types: [published]

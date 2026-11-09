@@ -112,9 +112,13 @@ The runner blocks outgoing network connections while it converts.
 `tests/` has unit tests (no network) and `scripts/compare.py`, which converts sample documents through both
 backends and checks that the plugins give the same result as the hub API.
 
+`tests/samples/synth/` has 40 generated test files (20 made-up documents, each as `.hwp` and `.hwpx`) with
+`truth.json` listing the expected paragraphs and table grids. They contain no real or personal data and are
+released under CC0 1.0, so any HWP reader can use them as test data. See its [README](tests/samples/synth/README.md).
+
 ## License and notices
 
-MIT, see [LICENSE](LICENSE). The conversion service itself is not part of this repository.
+MIT, see [LICENSE](LICENSE), except `tests/samples/` (CC0 1.0). The conversion service itself is not part of this repository.
 
 The service reads documents with [rhwp](https://github.com/edwardkim/rhwp) (MIT).
 This product was developed with reference to the HWP document file (.hwp) specification published by Hancom Inc.

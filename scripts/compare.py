@@ -5,7 +5,7 @@ usage: python scripts/compare.py OUT.json FILE [FILE ...] [--docx N] [--errors F
 Needs: markitdown, markitdown-ttdu-hwp, docling-ttdu-hwp installed; a running local runner
 (TTDU_LOCAL_KEY_FILE or TTDU_LOCAL_KEY set); TTDU_API_KEY for the keyed hub calls.
 Hub calls: per file 1 keyed (MarkItDown) + 1 without key (Docling, IP quota); plus N keyed DOCX
-calls and 1 call without key per error file.
+calls and 1 call without key per error file. With --keyed every hub call uses TTDU_API_KEY.
 """
 
 from __future__ import annotations
@@ -45,12 +45,13 @@ def main() -> None:
     ap.add_argument("--docx", type=int, default=3)
     ap.add_argument("--errors", nargs="*", default=[])
     ap.add_argument("--text-only", action="store_true", help="one hub call per file (no key): /v1/hwp/text via the Docling plugin; Markdown is compared through the shared formatting rules")
+    ap.add_argument("--keyed", action="store_true", help="send TTDU_API_KEY on every hub call, including the Docling and error calls (when the IP quota is used up)")
     a = ap.parse_args()
     key = os.environ.pop("TTDU_API_KEY", None)  # removed from the environment so the no-key client really has none
     md_local = MarkItDown(enable_plugins=True, ttdu_hwp_backend="local")
     md_hub = MarkItDown(enable_plugins=True, ttdu_hwp_backend="hub", ttdu_api_key=key)
     local = HwpClient("local")
-    hub_nokey = Recording("hub", api_key="")
+    hub_nokey = Recording("hub", api_key=(key if a.keyed else ""))
     hub_key = HwpClient("hub", api_key=key)
     rows = []
     for i, f in enumerate(a.files):
