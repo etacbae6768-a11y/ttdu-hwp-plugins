@@ -25,6 +25,8 @@ docling = ["docling>=2.40"]
 
 [project.urls]
 Documentation = "https://toolsthatdontupload.com/docs/hwp/"
+Repository = "https://github.com/etacbae6768-a11y/ttdu-hwp-plugins"
+Issues = "https://github.com/etacbae6768-a11y/ttdu-hwp-plugins/issues"
 
 [tool.hatch.version]
 path = "src/docling_ttdu_hwp/__init__.py"

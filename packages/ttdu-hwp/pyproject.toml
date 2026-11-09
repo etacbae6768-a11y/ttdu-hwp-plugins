@@ -23,6 +23,8 @@ dependencies = []
 
 [project.urls]
 Documentation = "https://toolsthatdontupload.com/docs/hwp/"
+Repository = "https://github.com/etacbae6768-a11y/ttdu-hwp-plugins"
+Issues = "https://github.com/etacbae6768-a11y/ttdu-hwp-plugins/issues"
 
 [project.scripts]
 ttdu-hwp = "ttdu_hwp.__main__:main"

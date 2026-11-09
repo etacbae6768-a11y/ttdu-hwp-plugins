@@ -23,6 +23,8 @@ dependencies = ["markitdown>=0.1.0", "ttdu-hwp>=0.1.0,<0.2"]
 
 [project.urls]
 Documentation = "https://toolsthatdontupload.com/docs/hwp/"
+Repository = "https://github.com/etacbae6768-a11y/ttdu-hwp-plugins"
+Issues = "https://github.com/etacbae6768-a11y/ttdu-hwp-plugins/issues"
 
 [project.entry-points."markitdown.plugin"]
 ttdu_hwp = "markitdown_ttdu_hwp"
